@@ -1,6 +1,8 @@
 {
-	"name": "svelte-virtual-list",
-	"version": "0.0.1",
+	"name": "@erdemgoksel/svelte-virtual-list",
+	"version": "5.0.0-next.0",
+	"description": "A virtual list component for Svelte 5",
+	"license": "LIL",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -28,6 +30,17 @@
 			"svelte": "./dist/index.js"
 		}
 	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ErdemGKSL/svelte-virtual-list.git"
+	},
+	"homepage": "https://github.com/ErdemGKSL/svelte-virtual-list#readme",
+	"bugs": {
+		"url": "https://github.com/ErdemGKSL/svelte-virtual-list/issues"
+	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"
 	},
@@ -50,6 +63,8 @@
 		"vite": "^8.0.7"
 	},
 	"keywords": [
-		"svelte"
+		"svelte",
+		"virtual-list",
+		"virtual-scroll"
 	]
 }

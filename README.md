@@ -1,4 +1,4 @@
-# svelte-virtual-list
+# @erdemgoksel/svelte-virtual-list
 
 A virtual list component for Svelte 5. Instead of rendering every item in a large array, `VirtualList` only renders the visible rows and pads the rest of the scroll area.
 
@@ -7,7 +7,7 @@ The current package is built as a Svelte 5 library and uses runes internally. Th
 ## Installation
 
 ```bash
-pnpm add svelte-virtual-list
+pnpm add @erdemgoksel/svelte-virtual-list
 ```
 
 You need Svelte 5 in the consuming app.
@@ -16,7 +16,7 @@ You need Svelte 5 in the consuming app.
 
 ```svelte
 <script lang="ts">
-  import { VirtualList } from 'svelte-virtual-list';
+  import { VirtualList } from '@erdemgoksel/svelte-virtual-list';
 
   let things = [
     { name: 'one', number: 1 },
@@ -108,7 +108,7 @@ If no `row` snippet is supplied, the component renders `Missing template`.
 The library exports a named component:
 
 ```ts
-import { VirtualList } from 'svelte-virtual-list';
+import { VirtualList } from '@erdemgoksel/svelte-virtual-list';
 ```
 
 ## Demo
