@@ -1,81 +1,121 @@
-# svelte-virtual-list ([demo](https://svelte.dev/repl/f78ddd84a1a540a9a40512df39ef751b))
+# svelte-virtual-list
 
-A virtual list component for Svelte apps. Instead of rendering all your data, `<VirtualList>` just renders the bits that are visible, keeping your page nice and light.
+A virtual list component for Svelte 5. Instead of rendering every item in a large array, `VirtualList` only renders the visible rows and pads the rest of the scroll area.
+
+The current package is built as a Svelte 5 library and uses runes internally. The virtualization logic is unchanged from the original component, but the rendering API now uses Svelte 5 snippets.
 
 ## Installation
 
 ```bash
-yarn add @sveltejs/svelte-virtual-list
+pnpm add svelte-virtual-list
 ```
 
+You need Svelte 5 in the consuming app.
 
 ## Usage
 
-```html
-<script>
-  import VirtualList from '@sveltejs/svelte-virtual-list';
+```svelte
+<script lang="ts">
+  import { VirtualList } from 'svelte-virtual-list';
 
-  const things = [
-    // these can be any values you like
+  let things = [
     { name: 'one', number: 1 },
     { name: 'two', number: 2 },
-    { name: 'three', number: 3 },
-    // ...
-    { name: 'six thousand and ninety-two', number: 6092 }
+    { name: 'three', number: 3 }
   ];
+
+  let start = $state(0);
+  let end = $state(0);
 </script>
 
-<VirtualList items={things} let:item>
-  <!-- this will be rendered for each currently visible item -->
-  <p>{item.number}: {item.name}</p>
-</VirtualList>
-```
-
-
-## `start` and `end`
-
-You can track which rows are visible at any given by binding to the `start` and `end` values:
-
-```html
 <VirtualList items={things} bind:start bind:end>
-  <p>{item.number}: {item.name}</p>
+  {#snippet row(item)}
+    <p>{item.number}: {item.name}</p>
+  {/snippet}
 </VirtualList>
 
-<p>showing {start}-{end} of {things.length} rows</p>
+<p>showing {start}-{Math.max(start, end - 1)} of {things.length} rows</p>
 ```
 
-You can rename them with e.g. `bind:start={a} bind:end={b}`.
+## Props
 
+### `items`
 
-## `height`
+The array to virtualize.
 
-By default, the `<VirtualList>` component will fill the vertical space of its container. You can specify a different height by passing any CSS length:
+### `height`
 
-```html
-<VirtualList height="500px" items={things} let:item>
-  <p>{item.number}: {item.name}</p>
-</VirtualList>
-```
+Defaults to `100%`. Pass any CSS length to control the viewport height.
 
-
-## `itemHeight`
-
-You can optimize initial display and scrolling when the height of items is known in advance. This should be a number representing a pixel value.
-
-```html
-<VirtualList itemHeight={48} items={things} let:item>
-  <p>{item.number}: {item.name}</p>
+```svelte
+<VirtualList items={things} height="500px">
+  {#snippet row(item)}
+    <p>{item.number}: {item.name}</p>
+  {/snippet}
 </VirtualList>
 ```
 
+### `itemHeight`
 
-## Configuring webpack
+Optional fixed row height in pixels. If this is provided, initial measurement and scrolling can be more efficient because the component does not need to measure each rendered row.
 
-If you're using webpack with [svelte-loader](https://github.com/sveltejs/svelte-loader), make sure that you add `"svelte"` to [`resolve.mainFields`](https://webpack.js.org/configuration/resolve/#resolve-mainfields) in your webpack config. This ensures that webpack imports the uncompiled component (`src/index.html`) rather than the compiled version (`index.mjs`) — this is more efficient.
+```svelte
+<VirtualList items={things} itemHeight={48}>
+  {#snippet row(item)}
+    <p>{item.number}: {item.name}</p>
+  {/snippet}
+</VirtualList>
+```
 
-If you're using Rollup with [rollup-plugin-svelte](https://github.com/rollup/rollup-plugin-svelte), this will happen automatically.
+### `start` and `end`
 
+These values are bindable and reflect the currently rendered slice.
 
-## License
+```svelte
+<script>
+  let start = $state(0);
+  let end = $state(0);
+</script>
 
-[LIL](LICENSE)
+<VirtualList items={things} bind:start bind:end>
+  {#snippet row(item)}
+    <p>{item.name}</p>
+  {/snippet}
+</VirtualList>
+```
+
+`start` is the index of the first visible row. `end` is the exclusive upper bound of the rendered range.
+
+## Rendering rows
+
+Rows are provided with a `row` snippet:
+
+```svelte
+<VirtualList items={things}>
+  {#snippet row(item)}
+    <article>
+      <h2>{item.name}</h2>
+      <p>#{item.number}</p>
+    </article>
+  {/snippet}
+</VirtualList>
+```
+
+If no `row` snippet is supplied, the component renders `Missing template`.
+
+## Package entry
+
+The library exports a named component:
+
+```ts
+import { VirtualList } from 'svelte-virtual-list';
+```
+
+## Demo
+
+The repository includes a SvelteKit showcase page in [src/routes/+page.svelte](src/routes/+page.svelte) that demonstrates:
+
+- bindable `start` and `end`
+- dynamic item counts
+- fixed and measured row heights
+- a snippet-based row renderer
